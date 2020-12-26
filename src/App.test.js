@@ -35,7 +35,7 @@ describe('the list', () => {
     render(<App />)
   })
 
-  it('can add an item to the list', async () => {
+  it('adds an item to the list', async () => {
     createCard()
 
     const tasks = getTasks()
@@ -43,19 +43,34 @@ describe('the list', () => {
     expect(tasks[tasks.length - 1].querySelector('textarea').value).toBe('')  
   })
 
-  it('saves in localstorage', () => {
-    const setItem = jest.spyOn(localStorage, 'setItem')
-    setItem.mockClear()
+  it('removes an item from the list', () => {
+    const tasks = getTasks()
+    expect(tasks.length).toBe(3)
 
-    createCard()
+    const deleteButton = screen.getByLabelText('delete task Wash dishes')
+    fireEvent.click(deleteButton)
 
-    const [key, value] = setItem.mock.calls[0]
-    expect(key).toBe('tasks')
-    expect(value).toContain('Buy milk')
+    const updatedTasks = getTasks()
+    expect(updatedTasks.length).toBe(2)
   })
 
-  it('fetches initial state from localstorage', () => {
-    const tasks = getTasks()
-    expect(tasks.length).toBe(3) // 2 tasks + new task card
+  describe('storage', () => {
+    it('saves in localstorage', () => {
+      const setItem = jest.spyOn(localStorage, 'setItem')
+      setItem.mockClear()
+  
+      createCard()
+  
+      const [key, value] = setItem.mock.calls[0]
+      expect(key).toBe('tasks')
+      expect(value).toContain('Buy milk')
+    })
+  
+    it('fetches initial state from localstorage', () => {
+      const tasks = getTasks()
+      expect(tasks.length).toBe(3) // 2 tasks + new task card
+    })
+  
   })
 })
+

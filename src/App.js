@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Task from './components/Task'
 
 import './App.css';
 
@@ -32,9 +33,13 @@ function App() {
     }
   }
 
+  const deleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id))
+  }
+
   return (
     <ul className="day-list">
-      {tasks.map(task => <li key={task.id} className="task">{task.description}</li>)}
+      {tasks.map(task => <li key={task.id}><Task task={task} deleteTask={deleteTask} /></li>)}
       <li style={{ height: '100%' }}>
         <textarea 
           onChange={updateTaskDescription} 
