@@ -22,7 +22,7 @@ function App() {
   }
 
   const addTask = (event) => {
-    if (event.key == 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
       const newTask = {
         id: (new Date()).getTime(),  
         description: event.target.value
@@ -33,13 +33,28 @@ function App() {
     }
   }
 
+  const updateTask = (task) => {
+    setTasks((tasks) => {
+      const index = tasks.findIndex(t => t.id === task.id)
+      return [
+        ...tasks.slice(0, index),
+        task,
+        ...tasks.slice(index + 1)
+      ]
+    })
+  }
+
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
   return (
     <ul className="day-list">
-      {tasks.map(task => <li key={task.id}><Task task={task} deleteTask={deleteTask} /></li>)}
+      {tasks.map(task => (
+        <li key={task.id}>
+          <Task task={task} updateTask={updateTask} deleteTask={deleteTask} />
+        </li>)
+      )}
       <li style={{ height: '100%' }}>
         <textarea 
           onChange={updateTaskDescription} 
