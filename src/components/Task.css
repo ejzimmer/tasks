@@ -5,7 +5,7 @@
   position: relative;
 }
 
-.task label {
+.task label, .task input[type="text"] {
   display: flex;
   align-items: center;
   gap: .33em;
@@ -14,7 +14,9 @@
   padding: 1em;
   border-radius: 15px;
   box-shadow: 2px 2px 2px 4px #222;
-
+  border: none;
+  font-size: 24px;
+  width: 100%;
 }
 
 .task button {
@@ -30,6 +32,9 @@
   background: transparent;
   padding: 7px;
 }
+.task button.edit {
+  right: 35px;
+}
 
 .task button svg {
   stroke: black;
@@ -42,7 +47,7 @@
   opacity: 1;
 }
 
-.task input {
+.task input[type='checkbox'] {
   position: fixed;
   top: -100vh;
   left: -100vw;
