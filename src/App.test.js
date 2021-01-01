@@ -56,6 +56,11 @@ describe('the list', () => {
     expect(washDishes).not.toBeInTheDocument()
   })
 
+  it('shows the number uncompleted items in the list', () => {
+    const uncomplete = screen.getByLabelText('tasks remaining')
+    expect(uncomplete).toHaveTextContent('1')
+  })
+
   describe('storage', () => {
     it('saves in localstorage', () => {
       createCard()

@@ -23,6 +23,7 @@ function App() {
 
   const addTask = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
       const newTask = {
         id: (new Date()).getTime(),  
         description: event.target.value
@@ -49,22 +50,25 @@ function App() {
   }
 
   return (
-    <ul className="day-list">
-      {tasks.map(task => (
-        <li key={task.id}>
-          <Task task={task} updateTask={updateTask} deleteTask={deleteTask} />
-        </li>)
-      )}
-      <li style={{ height: '100%' }}>
-        <textarea 
-          onChange={updateTaskDescription} 
-          value={newTask} 
-          onKeyDown={addTask} 
-          data-testid="new-task" 
-          rows={1} 
-          className="new-task" />
-      </li>
-    </ul>
+    <>
+      <ul className="day-list">
+        {tasks.map(task => (
+          <li key={task.id}>
+            <Task task={task} updateTask={updateTask} deleteTask={deleteTask} />
+          </li>)
+        )}
+        <li>
+          <textarea 
+            onChange={updateTaskDescription} 
+            value={newTask} 
+            onKeyDown={addTask} 
+            data-testid="new-task" 
+            rows={1} 
+            className="new-task" />
+        </li>
+      </ul>
+      <div className="tasks-remaining" aria-label="tasks remaining">{tasks.filter(task => !task.done).length}</div>
+    </>
   );
 }
 
