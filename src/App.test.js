@@ -47,23 +47,6 @@ describe('the list', () => {
     expect(screen.getByTestId('new-task').value).toBe('')  
   })
 
-  it('edits the description of an item', () => {
-    const editButton = screen.getByLabelText('edit task Mow lawn')
-    fireEvent.click(editButton)
-
-    const input = screen.getAllByRole('textbox')[0]
-    fireEvent.change(input, { target: { value: 'Mow lawn and water plants' } })
-    fireEvent.blur(input)
-
-    const washDishes = screen.getByText(/Mow lawn/)
-    expect(washDishes).toHaveTextContent('Mow lawn and water plants')
-  })
-
-  it('doesn\'t edit completed items', () => {
-    const editButton = screen.queryByLabelText('edit task Wash dishes')
-    expect(editButton).not.toBeInTheDocument()
-  })
-
   it('removes an item from the list', () => {
     const washDishes = screen.getByText('Wash dishes')
     const deleteButton = screen.getByLabelText('delete task Wash dishes')
