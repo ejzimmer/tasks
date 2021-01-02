@@ -28,7 +28,8 @@
 }
 
 .day-list li {
-  flex: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
 }
 
 .day-list li form {
