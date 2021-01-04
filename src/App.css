@@ -71,6 +71,6 @@
   justify-content: center;
   color: hsla(0, 0%, 90%, .8);
   font-size: 24px;
-  transform: translate(-20%, -30%);
+  transform: translate(20%, -30%);
   background-color: hsla(0, 0%, 30%, .8)
 }
