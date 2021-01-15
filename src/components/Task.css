@@ -1,6 +1,6 @@
 .task {
   color: #222;
-  font-size: 30px;
+  font-size: 20px;
   margin: .25em 0;
   position: relative;
 }
@@ -12,19 +12,24 @@
   cursor: pointer;
   background: hsl(224, 63%, 75%);
   padding: 1em;
-  border-radius: 15px;
+  padding-right: 45px;
   box-shadow: 2px 2px 2px 4px #222;
   border: none;
-  font-size: 24px;
+  font-size: inherit;
   width: 100%;
+}
+
+.task .buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .task button {
   --side: 20px;
   box-sizing: content-box;
-  position: absolute;
-  top: 7px;
-  right: 7px;
   border: none;
   cursor: pointer;
   width: var(--side);

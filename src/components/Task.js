@@ -33,6 +33,7 @@ export default function Task({task, deleteTask, updateTask}) {
       { !editMode && <label htmlFor={`task_${task.id}`}>{task.description}</label>}
       { editMode && <input type="text" ref={editor} value={task.description} onChange={updateTaskDescription} onBlur={() => setEditMode(false)} />}
 
+      <div className="buttons">
       <button 
         aria-label={`delete task ${task.description}`} 
         onClick={() => deleteTask(task.id)}
@@ -49,6 +50,7 @@ export default function Task({task, deleteTask, updateTask}) {
           <path d="M9,69 l20,20 65,-65 -20,-20" />
         </svg>
         </button>)}
+      </div>
     </div>
   )
 }
