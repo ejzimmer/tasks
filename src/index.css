@@ -12,7 +12,7 @@ body {
   background: #555;
   background: linear-gradient(#484848, #555);
   height: 100%;
-  padding: 40px;
+  padding: 20px;
 }
 
 *, *::before, *::after {

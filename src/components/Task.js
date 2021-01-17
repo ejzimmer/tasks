@@ -34,6 +34,13 @@ export default function Task({task, deleteTask, updateTask}) {
       { editMode && <input type="text" ref={editor} value={task.description} onChange={updateTaskDescription} onBlur={() => setEditMode(false)} />}
 
       <div className="buttons">
+      { !task.done && (
+        <button className="edit" aria-label={`edit task ${task.description}`} onClick={() => setEditMode(true)}>
+        <svg width="100%" viewBox="0 0 100 100">
+          <path d="M0,80 l0,20 20,0z" />
+          <path d="M9,69 l20,20 65,-65 -20,-20" />
+        </svg>
+        </button>)}
       <button 
         aria-label={`delete task ${task.description}`} 
         onClick={() => deleteTask(task.id)}
@@ -43,13 +50,6 @@ export default function Task({task, deleteTask, updateTask}) {
           <path d="M100,0 l-100,100" />
         </svg>
       </button>
-      { !task.done && (
-        <button className="edit" aria-label={`edit task ${task.description}`} onClick={() => setEditMode(true)}>
-        <svg width="100%" viewBox="0 0 100 100">
-          <path d="M0,80 l0,20 20,0z" />
-          <path d="M9,69 l20,20 65,-65 -20,-20" />
-        </svg>
-        </button>)}
       </div>
     </div>
   )
