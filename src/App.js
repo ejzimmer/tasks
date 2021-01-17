@@ -12,9 +12,6 @@ function App() {
     return value ? JSON.parse(value) : []
   })
 
-  const [dragee, setDragee] = useState()
-  const [dragPosition, setDragPosition] = useState()
-
   useEffect(() => {
     if (tasks.length > 0)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
@@ -52,36 +49,51 @@ function App() {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
-  const handleDrag = (event) => {
-    console.log(event.clientY)
-    setDragPosition(event.clientY)
-  }
-
-  const handleDragEnd = () => {
-    const positions = Array.from(document.querySelectorAll('.day-list li')).map(item => item.getBoundingClientRect().top)
-
-    let newIndex 
-    if (dragPosition > positions[positions.length - 1])
-      newIndex = positions.length
-    else
-      newIndex = positions.findIndex((pos, index) => pos <= dragPosition && positions[index + 1] > dragPosition) + 1
-    
-    setTasks(tasks => {
-      const unmovedTasks = tasks.filter(task => task !== dragee)
-      return [
-          ...unmovedTasks.slice(0, newIndex),
-          dragee,
-          ...unmovedTasks.slice(newIndex)
-        ].filter(x => !!x)
+  const moveTask = (task, direction) => {
+    setTasks((tasks) => {
+      const index = tasks.findIndex(t => t.id === task.id)
+      if ((index === 0 && direction === 'UP') || (index === tasks.length - 1 && direction === 'DOWN'))
+        return tasks
+      
+      switch(direction) {
+        case 'UP':
+          return [
+            ...tasks.slice(0, index - 1),
+            task,
+            tasks[index - 1],
+            ...tasks.slice(index + 1)
+          ]
+        case 'TO_TOP':
+          return [
+            task,
+            ...tasks.slice(0, index),
+            ...tasks.slice(index + 1)
+          ]
+        case 'DOWN':
+          return [
+            ...tasks.slice(0, index),
+            tasks[index + 1],
+            task,
+            ...tasks.slice(index + 2)
+          ]
+        case 'TO_BOTTOM':
+          return [
+            ...tasks.slice(0, index),
+            ...tasks.slice(index + 1),
+            task
+          ]
+        default:
+          return tasks
+      }
     })
   }
 
   return (
     <>
-      <ul className="day-list" onDragOver={handleDrag}>
+      <ul className="day-list">
         {tasks.map(task => (
-          <li key={task.id} draggable onDragStart={() => setDragee(task)} onDragEnd={handleDragEnd}>
-            <Task task={task} updateTask={updateTask} deleteTask={deleteTask} />
+          <li key={task.id}>
+            <Task task={task} updateTask={updateTask} deleteTask={deleteTask} moveTask={moveTask} />
           </li>)
         )}
         <li>

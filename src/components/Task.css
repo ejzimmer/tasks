@@ -3,6 +3,7 @@
   font-size: 20px;
   margin: .25em 0;
   position: relative;
+  padding-right: 96px;
 }
 
 .task label, .task input[type="text"] {
@@ -10,14 +11,18 @@
   align-items: center;
   gap: .33em;
   cursor: pointer;
-  padding-right: 45px;
   border: none;
   font-size: inherit;
   width: 100%;
   color: hsl(22, 13%, 87%);
 }
 
-.task .buttons {
+.task input[type="text"] {
+  color: #333;
+  padding: .25em;
+}
+
+.task .buttons, .task .move-buttons {
   position: absolute;
   top: 0;
   right: 0;
@@ -36,6 +41,9 @@
 }
 .task button.edit {
   right: 35px;
+}
+.move-buttons button {
+  width: auto;
 }
 
 .task button svg {
