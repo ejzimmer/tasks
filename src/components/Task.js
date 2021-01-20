@@ -43,6 +43,7 @@ const MOVE_BUTTONS = [
 export default function Task({task, deleteTask, updateTask, moveTask}) {
   const [editMode, setEditMode] = useState(false)
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+  const [dialogPosition, setDialogPosition] = useState(0)
   const editor = useRef()
   const moveButtons = useRef()
 
@@ -80,7 +81,8 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
     } 
   }
 
-  function checkDelete() {
+  function checkDelete(event) {
+    setDialogPosition(event.target.scrollTop)
     setShowConfirmDelete(true)
   }
   function confirmDelete() {
@@ -108,7 +110,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
           </button>)}
         <button className="icon"
           aria-label={`delete task ${task.description}`} 
-          onClick={() => checkDelete()}
+          onClick={checkDelete}
         >
           <svg width="100%" viewBox="0 0 100 100">
             <path d="M0,0 l100,100" />
@@ -126,7 +128,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
       )}
 
       {showConfirmDelete && (
-        <div className="modal">
+        <div className="modal" style={{top: dialogPosition}}>
           <h2>Really delete?</h2>
           <div className="side-by-side" style={{marginTop: '20px'}}>
             <button onClick={confirmDelete}>Yes</button>
