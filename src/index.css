@@ -3,6 +3,7 @@ html {
 }
 
 body {
+  --white: hsla(0, 0%, 90%, .8);
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -17,5 +18,38 @@ body {
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+.modal {
+  border: 2px solid currentColor;
+  position: fixed;
+  z-index: 1;
+  padding: 1em;
+  background: var(--white);
+}
+.modal h2 {
+  margin: 0;
+}
+.modal button {
+  border: 1px solid currentColor;
+  font-size: 20px;
+  padding: 10px 20px;
+}
+
+button.icon {
+  --side: 20px;
+  box-sizing: content-box;
+  border: none;
+  cursor: pointer;
+  width: var(--side);
+  height: var(--side);
+  background: transparent;
+  padding: 7px;
+}
+
+.side-by-side {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
 }
 

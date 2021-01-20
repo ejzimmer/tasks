@@ -42,6 +42,7 @@ const MOVE_BUTTONS = [
 
 export default function Task({task, deleteTask, updateTask, moveTask}) {
   const [editMode, setEditMode] = useState(false)
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
   const editor = useRef()
   const moveButtons = useRef()
 
@@ -79,6 +80,17 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
     } 
   }
 
+  function checkDelete() {
+    setShowConfirmDelete(true)
+  }
+  function confirmDelete() {
+    deleteTask(task.id)
+    setShowConfirmDelete(false)
+  }
+  function cancelDelete() {
+    setShowConfirmDelete(false)
+  }
+
   return (
     <div className="task">
       <input id={`task_${task.id}`} type="checkbox" checked={!!task.done} onChange={setTaskDone} />
@@ -88,15 +100,15 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
       { !editMode && (
       <div className="buttons">
         { !task.done && (
-          <button className="edit" aria-label={`edit task ${task.description}`} onClick={() => setEditMode(true)}>
+          <button className="edit icon" aria-label={`edit task ${task.description}`} onClick={() => setEditMode(true)}>
           <svg width="100%" viewBox="0 0 100 100">
             <path d="M0,80 l0,20 20,0z" />
             <path d="M9,69 l20,20 65,-65 -20,-20" />
           </svg>
           </button>)}
-        <button 
+        <button className="icon"
           aria-label={`delete task ${task.description}`} 
-          onClick={() => deleteTask(task.id)}
+          onClick={() => checkDelete()}
         >
           <svg width="100%" viewBox="0 0 100 100">
             <path d="M0,0 l100,100" />
@@ -109,7 +121,17 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
       {editMode && (
         <div className="move-buttons" ref={moveButtons}>
           {MOVE_BUTTONS.map(({key, text, Image}) => 
-            <button key={key} aria-label={`move task ${task.description} ${text}`} onClick={() => handleMoveTask(key)}><Image /></button>)}
+            <button key={key} className="icon" aria-label={`move task ${task.description} ${text}`} onClick={() => handleMoveTask(key)}><Image /></button>)}
+        </div>
+      )}
+
+      {showConfirmDelete && (
+        <div className="modal">
+          <h2>Really delete?</h2>
+          <div className="side-by-side" style={{marginTop: '20px'}}>
+            <button onClick={confirmDelete}>Yes</button>
+            <button onClick={cancelDelete}>No</button>
+          </div>
         </div>
       )}
     </div>

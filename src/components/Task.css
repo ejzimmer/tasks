@@ -29,16 +29,6 @@
   display: flex;
 }
 
-.task button {
-  --side: 20px;
-  box-sizing: content-box;
-  border: none;
-  cursor: pointer;
-  width: var(--side);
-  height: var(--side);
-  background: transparent;
-  padding: 7px;
-}
 .task button.edit {
   right: 35px;
 }

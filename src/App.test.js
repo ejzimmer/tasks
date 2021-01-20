@@ -57,8 +57,8 @@ const getTaskDescription = (index) => {
   const input = task.querySelector('input[type=text]')
   return input && input.value
 }
-const clickButton = (labelText) => {
-  const button = screen.getByLabelText(labelText)
+const clickButton = (text) => {
+  const button = screen.queryByLabelText(text) || screen.queryByText(text)
   fireEvent.click(button)
 }
 const clickEditButton = description => clickButton(`edit task ${description}`)
@@ -85,6 +85,7 @@ describe('the list', () => {
 
   it('removes an item from the list', () => {
     clickButton('delete task Wash dishes')
+    clickButton('Yes')
 
     expect(getTaskDescriptions()).toEqual(['Mow lawn', 'Cook dinner'])
   })
