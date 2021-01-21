@@ -80,6 +80,11 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
       setEditMode(false)
     } 
   }
+  function handleKeyDown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      setEditMode(false)
+    }
+  }
 
   function checkDelete(event) {
     setDialogPosition(event.target.scrollTop)
@@ -97,7 +102,14 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
     <div className="task">
       <input id={`task_${task.id}`} type="checkbox" checked={!!task.done} onChange={setTaskDone} />
       { !editMode && <label htmlFor={`task_${task.id}`}>{task.description}</label>}
-      { editMode && <input type="text" ref={editor} value={task.description} onChange={updateTaskDescription} onBlur={handleBlur} />}
+      { editMode && (
+        <input type="text" 
+          ref={editor} 
+          value={task.description} 
+          onChange={updateTaskDescription} 
+          onBlur={handleBlur} 
+          onKeyDown={handleKeyDown} />
+      )}
 
       { !editMode && (
       <div className="buttons">
