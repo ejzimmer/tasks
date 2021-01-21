@@ -85,6 +85,7 @@ describe('the list', () => {
 
   it('doesn\'t add items with blank descriptions', () => {
     createCard('')
+    createCard('\n')
 
     const tasks = getTaskDescriptions()
     expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner'])
