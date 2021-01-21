@@ -21,14 +21,14 @@ Object.defineProperty(window, 'localStorage', {
   }
 })
 
-function createCard() {
+function createCard(description = 'Buy milk') {
   act(() => {
     const input = screen.getByTestId('new-task')
     fireEvent.keyDown(input, { 
       key: 'Enter',
       shiftKey: false,
       target: {
-        value: 'Buy milk'
+        value: description
       }
     })
   })
@@ -81,6 +81,13 @@ describe('the list', () => {
     const tasks = getTaskDescriptions()
     expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner', 'Buy milk'])
     expect(screen.getByTestId('new-task').value).toBe('')  
+  })
+
+  it('doesn\'t add items with blank descriptions', () => {
+    createCard('')
+
+    const tasks = getTaskDescriptions()
+    expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner'])
   })
 
   it('removes an item from the list', () => {

@@ -9,7 +9,7 @@ function App() {
   const [newTask, setNewTask] = useState('')
   const [tasks, setTasks] = useState(() => {
     const value = localStorage.getItem(STORAGE_KEY)
-    return (value ? JSON.parse(value) : []).filter(task => !!task.description)
+    return value ? JSON.parse(value) : []
   })
 
   useEffect(() => {
@@ -22,11 +22,12 @@ function App() {
   }
 
   const addTask = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    const description = event.target.value
+    if (event.key === 'Enter' && !event.shiftKey && description) {
       event.preventDefault()
       const newTask = {
         id: (new Date()).getTime(),  
-        description: event.target.value
+        description
       }
 
       setTasks([...tasks, newTask])
