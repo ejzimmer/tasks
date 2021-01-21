@@ -9,7 +9,7 @@ function App() {
   const [newTask, setNewTask] = useState('')
   const [tasks, setTasks] = useState(() => {
     const value = localStorage.getItem(STORAGE_KEY)
-    return value ? JSON.parse(value) : []
+    return (value ? JSON.parse(value) : []).filter(task => !!task.description)
   })
 
   useEffect(() => {
