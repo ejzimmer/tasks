@@ -2,14 +2,20 @@ import { useEffect, useState } from 'react'
 import Task from './components/Task'
 
 import './App.css';
+import { isBefore, startOfDay } from 'date-fns';
 
 const STORAGE_KEY = 'tasks'
+const TODAY = startOfDay(Date.now())
+const isTaskDoneYesterday = (task) => task.done && (!task.doneAt || isBefore(task.doneAt, TODAY))
 
 function App() {
   const [newTask, setNewTask] = useState('')
   const [tasks, setTasks] = useState(() => {
-    const value = localStorage.getItem(STORAGE_KEY)
-    return (value ? JSON.parse(value) : []).filter(task => !!(task.description.trim()))
+    const value = localStorage.getItem(STORAGE_KEY) || '[]'
+    
+    return JSON.parse(value)
+            .filter(task => !!(task.description.trim()))
+            .filter(task => !isTaskDoneYesterday(task))
   })
 
   useEffect(() => {

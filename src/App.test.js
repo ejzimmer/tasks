@@ -5,19 +5,7 @@ import App from './App';
 Object.defineProperty(window, 'localStorage', {
   value: {
     setItem: jest.fn(),
-    getItem: () => JSON.stringify([{
-      id: 1,
-      description: 'Wash dishes',
-      done: false
-    }, {
-      id: 2,
-      description: 'Mow lawn',
-      done: false
-    }, {
-      id: 3,
-      description: 'Cook dinner',
-      done: false
-    }])
+    getItem: jest.fn()
   }
 })
 
@@ -33,9 +21,6 @@ function createCard(description = 'Buy milk') {
     })
   })
 }
-
-const INITIAL_TASK_DESCRIPTIONS = JSON.parse(localStorage.getItem()).map(task => task.description)
-
 
 const getTasks = () => screen.getAllByRole('listitem')
 const getTaskDescriptions = () => getTasks().map((_, index) => getTaskDescription(index)).slice(0, getTasks().length - 1)
@@ -70,7 +55,24 @@ const clickMoveToBottomButton = description => clickButton(`move task ${descript
 const setItem = jest.spyOn(localStorage, 'setItem')
 
 describe('the list', () => {
+  let INITIAL_TASK_DESCRIPTIONS
+
   beforeEach(() => {
+    jest.spyOn(localStorage, 'getItem').mockReturnValue(JSON.stringify([{
+      id: 1,
+      description: 'Wash dishes',
+      done: false
+    }, {
+      id: 2,
+      description: 'Mow lawn',
+      done: false
+    }, {
+      id: 3,
+      description: 'Cook dinner',
+      done: false
+    }]))
+    INITIAL_TASK_DESCRIPTIONS = JSON.parse(localStorage.getItem()).map(task => task.description)
+
     render(<App />)
     setItem.mockClear()
   })
@@ -186,7 +188,6 @@ describe('the list', () => {
   })
 
 
-
   describe('storage', () => {
     it('saves in localstorage', () => {
       createCard()
@@ -213,4 +214,30 @@ describe('the list', () => {
 
   })
 })
+
+describe('auto-scheduling', () => {
+  it('removes tasks which were completed yesterday', () => {
+    const yesterday = Date.now() - 24 * 60 * 60 * 1000
+    jest.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([{
+      id: 1,
+      description: 'Wash dishes',
+      done: true,
+      doneAt: yesterday
+    }, {
+      id: 2,
+      description: 'Mow lawn',
+      done: false
+    }, {
+      id: 3,
+      description: 'Cook dinner',
+      done: false
+    }]))
+    
+    render(<App />)
+
+    const tasks = getTaskDescriptions()
+    expect(tasks).not.toContain('Wash dishes')
+  })
+})
+
 

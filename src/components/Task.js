@@ -56,7 +56,8 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
     const done = !task.done
     updateTask({
       ...task,
-      done
+      done,
+      doneAt: Date.now()
     })
   }
 
