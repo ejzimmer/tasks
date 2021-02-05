@@ -13,17 +13,25 @@ function App() {
   const [tasks, setTasks] = useState(() => {
     const value = localStorage.getItem(STORAGE_KEY) || '[]'
 
-    const tasks = JSON.parse(value).filter(task => !!(task.description.trim()))
-    const rescheduledTasks = tasks.map((task) => {
+    const allTasks = JSON.parse(value).filter(task => !!(task.description.trim()))
+    const rescheduledTasks = allTasks.map((task) => {
       if (isTaskDoneYesterday(task) && task.schedule === 'DAILY') {
         task.done = false
       }
 
       return task
     })
-    const undoneTasks = rescheduledTasks.filter(task => !isTaskDoneYesterday(task))
 
-    return undoneTasks
+    return rescheduledTasks
+            .filter(task => !isTaskDoneYesterday(task))
+            .sort(({schedule: a}, {schedule: b}) =>  {
+              if (a === b) return 0
+
+              if (a === 'DAILY') return -1
+
+              return 1
+            })
+
   })
 
   useEffect(() => {

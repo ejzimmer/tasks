@@ -100,7 +100,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
   }
 
   return (
-    <div className="task">
+    <div className={`task ${task.schedule === 'DAILY' ? 'daily' : ''}`}>
       <input id={`task_${task.id}`} type="checkbox" checked={!!task.done} onChange={setTaskDone} />
       { !editMode && <label htmlFor={`task_${task.id}`}>{task.description}</label>}
       { editMode && (

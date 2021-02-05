@@ -1,10 +1,9 @@
 .task {
   color: #222;
   font-size: 20px;
-  margin: .25em 0;
   position: relative;
-  padding-bottom: .5em;
-  padding-right: 96px;
+  padding: .5em 96px;
+  padding-left: .5em;
   border-bottom: 1px solid #000
 }
 
@@ -57,4 +56,8 @@
 .task input:checked + label {
   text-decoration: line-through;
   color: #888;
+}
+
+.task.daily {
+  background: hsla(0 50% 50% / .1);
 }
