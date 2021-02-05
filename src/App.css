@@ -26,16 +26,16 @@
   justify-content: flex-start;
 }
 
-.day-list li {
+.day-list > li {
   flex: 0 1 auto;
   overflow: hidden;
 }
 
-.day-list li form {
+.day-list > li form {
   height: 100%;
 }
 
-.day-list li:last-child {
+.day-list > li:last-child {
   margin-top: .75em;
   padding: .5em;
   flex-grow: 1;

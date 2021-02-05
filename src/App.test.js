@@ -10,13 +10,13 @@ Object.defineProperty(window, 'localStorage', {
   }
 })
 
-const getTasks = () => screen.getAllByRole('listitem')
-const getTaskDescriptions = () => getTasks().map((_, index) => getTaskDescription(index)).slice(0, getTasks().length - 1)
+const getTasks = () => Array.from(screen.getByTestId('tasks').querySelectorAll('.task'))
+const getTaskDescriptions = () => getTasks().map((_, index) => getTaskDescription(index))
 const getTask = (index) => {
   const tasks = getTasks()
 
   if (index < 0) {
-    return tasks[tasks.length - 1 + index] // ignore new task input at end of list
+    return tasks[tasks.length + index]
   }
 
   return tasks[index]
@@ -43,7 +43,7 @@ const clickMoveToBottomButton = description => clickButton(`move task ${descript
 const setItem = jest.spyOn(localStorage, 'setItem')
 
 describe('the list', () => {
-  let INITIAL_TASK_DESCRIPTIONS
+  let INITIAL_TASK_DESCRIPTIONS 
 
   beforeEach(() => {
     jest.spyOn(localStorage, 'getItem').mockReturnValue(JSON.stringify([{
@@ -67,7 +67,7 @@ describe('the list', () => {
 
   it('adds an item to the list', async () => {
     createCard()
-
+    
     const tasks = getTaskDescriptions()
     expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner', 'Buy milk'])
     expect(screen.getByTestId('new-task').value).toBe('')  

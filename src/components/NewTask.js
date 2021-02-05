@@ -1,6 +1,17 @@
 import React, { useState } from 'react'
 import './NewTask.css'
 
+const schedules = [
+  {
+    label: '毎日',
+    value: 'DAILY'
+  },
+  {
+    label: '毎週',
+    value: 'WEEKLY'
+  },
+]
+
 export default function NewTask({ addTask }) {
   const [description, setDescription] = useState('')
   const [schedule, setSchedule] = useState('')
@@ -49,15 +60,20 @@ export default function NewTask({ addTask }) {
         value={description} 
         data-testid="new-task" 
         rows={1}  />
-      <input 
-        type="checkbox" 
-        id="daily" 
-        aria-label="daily" 
-        checked={schedule === 'DAILY'} 
-        value="DAILY" 
-        onChange={handleScheduleChange} />
-      <label htmlFor="daily">毎日</label>
-      <button type="submit">submit</button>
+        <ul className="schedules">
+      { schedules.map(({ value, label}) => (<li key={value}>
+          <input 
+            type="checkbox" 
+            id={value} 
+            aria-label={value} 
+            checked={schedule === value} 
+            value={value}
+            onChange={handleScheduleChange} />
+          <label htmlFor="daily">{label}</label>
+        </li>))}
+        </ul>
+
+        <button type="submit">submit</button>
     </form>
   )
 }

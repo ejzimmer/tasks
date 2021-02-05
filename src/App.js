@@ -99,7 +99,7 @@ function App() {
 
   return (
     <>
-      <ul className="day-list">
+      <ul className="day-list" data-testid="tasks">
         {tasks.map(task => (
           <li key={task.id}>
             <Task task={task} updateTask={updateTask} deleteTask={deleteTask} moveTask={moveTask} />

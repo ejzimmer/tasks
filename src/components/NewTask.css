@@ -33,12 +33,29 @@
   margin: .5em 0;
   padding: .3em;
   border: 1px solid white;
-  border-radius: 2px;
   cursor: pointer;
 }
 .new-task label:hover, .new-task input:checked + label {
   color: currentColor;
   background: white;
+}
+.new-task .schedules li:first-child label {
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+.new-task .schedules li:last-child label {
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.new-task .schedules {
+  display: flex;
+  padding: 0;
+}
+.new-task .schedules li {
+  margin: 0;
+  padding: 0;
+  --border-radius: 4px;
 }
 
 .new-task button {

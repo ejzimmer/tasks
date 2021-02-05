@@ -20,10 +20,16 @@ describe("New task", () => {
   })
 
   it('creates a daily task', () => {
-    createCard('Brush teeth', 'daily')
+    createCard('Brush teeth', 'DAILY')
 
     const [task] = addTask.mock.calls[0]
     expect(task.schedule).toBe('DAILY')
   })
 
+  it('creates a weekly task', () => {
+    createCard('Take out bins', 'WEEKLY')
+
+    const [task] = addTask.mock.calls[0]
+    expect(task.schedule).toBe('WEEKLY')
+  })
 })
