@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Task from './components/Task'
+import NewTask from './components/NewTask'
 
 import './App.css';
 import { isBefore, startOfDay } from 'date-fns';
@@ -9,13 +10,20 @@ const TODAY = startOfDay(Date.now())
 const isTaskDoneYesterday = (task) => task.done && (!task.doneAt || isBefore(task.doneAt, TODAY))
 
 function App() {
-  const [newTask, setNewTask] = useState('')
   const [tasks, setTasks] = useState(() => {
     const value = localStorage.getItem(STORAGE_KEY) || '[]'
-    
-    return JSON.parse(value)
-            .filter(task => !!(task.description.trim()))
-            .filter(task => !isTaskDoneYesterday(task))
+
+    const tasks = JSON.parse(value).filter(task => !!(task.description.trim()))
+    const rescheduledTasks = tasks.map((task) => {
+      if (isTaskDoneYesterday(task) && task.schedule === 'DAILY') {
+        task.done = false
+      }
+
+      return task
+    })
+    const undoneTasks = rescheduledTasks.filter(task => !isTaskDoneYesterday(task))
+
+    return undoneTasks
   })
 
   useEffect(() => {
@@ -23,22 +31,8 @@ function App() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
   }, [tasks])
 
-  const updateTaskDescription = (event) => {
-    setNewTask(event.target.value)
-  }
-
-  const addTask = (event) => {
-    const description = event.target.value.trim()
-    if (event.key === 'Enter' && !event.shiftKey && description) {
-      event.preventDefault()
-      const newTask = {
-        id: (new Date()).getTime(),  
-        description
-      }
-
-      setTasks([...tasks, newTask])
-      setNewTask('')
-    }
+  const addTask = (newTask) => {
+    setTasks([...tasks, newTask])
   }
 
   const updateTask = (task) => {
@@ -104,13 +98,7 @@ function App() {
           </li>)
         )}
         <li>
-          <textarea 
-            onChange={updateTaskDescription} 
-            value={newTask} 
-            onKeyDown={addTask} 
-            data-testid="new-task" 
-            rows={1} 
-            className="new-task" />
+          <NewTask addTask={addTask} />
         </li>
       </ul>
       <div className="tasks-remaining" aria-label="tasks remaining">{tasks.filter(task => !task.done).length}</div>

@@ -1,0 +1,47 @@
+.new-task {
+  opacity: 0;
+  transition: opacity .2s;
+}
+.new-task:focus-within {
+  opacity: 1;
+}
+
+.new-task textarea {
+  padding: 0;
+  font-size: 20px;
+  background: white;
+  border: none;
+  width: 100%;
+  appearance: none;
+  resize: none;
+  padding: .25em;
+  transition: all .2s;
+  color: black;
+}
+.new-task:focus-within textarea {
+  background: white;
+  color: black;
+}
+
+.new-task input {
+  position: fixed;
+  left: -100vw;
+}
+.new-task label {
+  color: white;
+  display: inline-block;
+  margin: .5em 0;
+  padding: .3em;
+  border: 1px solid white;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.new-task label:hover, .new-task input:checked + label {
+  color: currentColor;
+  background: white;
+}
+
+.new-task button {
+  position: fixed;
+  left: -100vw;
+}

@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { createCard } from './testUtils'
 
 import App from './App';
 
@@ -8,19 +9,6 @@ Object.defineProperty(window, 'localStorage', {
     getItem: jest.fn()
   }
 })
-
-function createCard(description = 'Buy milk') {
-  act(() => {
-    const input = screen.getByTestId('new-task')
-    fireEvent.keyDown(input, { 
-      key: 'Enter',
-      shiftKey: false,
-      target: {
-        value: description
-      }
-    })
-  })
-}
 
 const getTasks = () => screen.getAllByRole('listitem')
 const getTaskDescriptions = () => getTasks().map((_, index) => getTaskDescription(index)).slice(0, getTasks().length - 1)
@@ -83,14 +71,6 @@ describe('the list', () => {
     const tasks = getTaskDescriptions()
     expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner', 'Buy milk'])
     expect(screen.getByTestId('new-task').value).toBe('')  
-  })
-
-  it('doesn\'t add items with blank descriptions', () => {
-    createCard('')
-    createCard('\n')
-
-    const tasks = getTaskDescriptions()
-    expect(tasks).toEqual(['Wash dishes', 'Mow lawn', 'Cook dinner'])
   })
 
   it('removes an item from the list', () => {
@@ -215,9 +195,10 @@ describe('the list', () => {
   })
 })
 
-describe('auto-scheduling', () => {
-  it('removes tasks which were completed yesterday', () => {
-    const yesterday = Date.now() - 24 * 60 * 60 * 1000
+describe('scheduling', () => {
+  const yesterday = Date.now() - 24 * 60 * 60 * 1000
+
+  beforeEach(() => {
     jest.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([{
       id: 1,
       description: 'Wash dishes',
@@ -231,12 +212,27 @@ describe('auto-scheduling', () => {
       id: 3,
       description: 'Cook dinner',
       done: false
+    }, {
+      id: 4,
+      description: 'Brush teeth',
+      done: true,
+      doneAt: yesterday,
+      schedule: 'DAILY'
     }]))
-    
+
     render(<App />)
 
+  })
+
+  it('removes tasks which were completed yesterday', () => {
     const tasks = getTaskDescriptions()
     expect(tasks).not.toContain('Wash dishes')
+  })
+
+  it('adds daily scheduled tasks', () => {
+    const brushTeeth = screen.queryByText('Brush teeth')
+    expect(brushTeeth).toBeInTheDocument()
+    expect(brushTeeth).not.toBeChecked()
   })
 })
 
