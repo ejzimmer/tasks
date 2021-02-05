@@ -69,7 +69,7 @@ export default function NewTask({ addTask }) {
             checked={schedule === value} 
             value={value}
             onChange={handleScheduleChange} />
-          <label htmlFor="daily">{label}</label>
+          <label htmlFor={value}>{label}</label>
         </li>))}
         </ul>
 

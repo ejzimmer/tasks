@@ -61,3 +61,6 @@
 .task.daily {
   background: hsla(0 50% 50% / .1);
 }
+.task.weekly {
+  background: hsla(150 50% 50% / .1);
+}

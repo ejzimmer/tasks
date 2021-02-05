@@ -88,7 +88,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
   }
 
   function checkDelete(event) {
-    setDialogPosition(event.target.scrollTop)
+    setDialogPosition(event.target.scrollTop + 20)
     setShowConfirmDelete(true)
   }
   function confirmDelete() {
@@ -100,7 +100,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
   }
 
   return (
-    <div className={`task ${task.schedule === 'DAILY' ? 'daily' : ''}`}>
+    <div className={`task ${task.schedule ? task.schedule.toLowerCase() : ''}`}>
       <input id={`task_${task.id}`} type="checkbox" checked={!!task.done} onChange={setTaskDone} />
       { !editMode && <label htmlFor={`task_${task.id}`}>{task.description}</label>}
       { editMode && (

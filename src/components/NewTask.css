@@ -2,7 +2,7 @@
   opacity: 0;
   transition: opacity .2s;
 }
-.new-task:focus-within {
+.new-task:focus-within, .new-task:hover {
   opacity: 1;
 }
 

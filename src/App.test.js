@@ -197,6 +197,7 @@ describe('the list', () => {
 
 describe('scheduling', () => {
   const yesterday = Date.now() - 24 * 60 * 60 * 1000
+  const lastWeek = Date.now() - 7 * 24 * 60 * 60 * 1000
 
   beforeEach(() => {
     jest.spyOn(localStorage, 'getItem').mockReturnValueOnce(JSON.stringify([{
@@ -209,15 +210,23 @@ describe('scheduling', () => {
       description: 'Mow lawn',
       done: false
     }, {
-      id: 3,
-      description: 'Cook dinner',
-      done: false
-    }, {
       id: 4,
       description: 'Brush teeth',
       done: true,
       doneAt: yesterday,
       schedule: 'DAILY'
+    }, {
+      id: 5,
+      description: 'Take out bins',
+      done: true,
+      doneAt: yesterday,
+      schedule: 'WEEKLY'
+    }, {
+      id: 6,
+      description: 'Clean bathroom',
+      done: true,
+      doneAt: lastWeek,
+      schedule: 'WEEKLY'
     }]))
 
     render(<App />)
@@ -229,10 +238,22 @@ describe('scheduling', () => {
     expect(tasks).not.toContain('Wash dishes')
   })
 
-  it('adds daily scheduled tasks', () => {
-    const brushTeeth = screen.queryByText('Brush teeth')
+  it('re-schedules daily scheduled tasks', () => {
+    const brushTeeth = screen.queryByLabelText('Brush teeth')
     expect(brushTeeth).toBeInTheDocument()
     expect(brushTeeth).not.toBeChecked()
+  })
+
+  it('doesn\'t remove completed weekly scheduled tasks', () => {
+    const takeOutBins = screen.queryByLabelText('Take out bins')
+    expect(takeOutBins).toBeInTheDocument()
+    expect(takeOutBins).toBeChecked()
+  })
+
+  it('reschedules weekly scheduled tasks', () => {
+    const cleanBathroom = screen.queryByLabelText('Clean bathroom')
+    expect(cleanBathroom).toBeInTheDocument()
+    expect(cleanBathroom).not.toBeChecked()
   })
 })
 
