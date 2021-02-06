@@ -60,20 +60,21 @@ export default function NewTask({ addTask }) {
         value={description} 
         data-testid="new-task" 
         rows={1}  />
-        <ul className="schedules">
-      { schedules.map(({ value, label}) => (<li key={value}>
-          <input 
-            type="checkbox" 
-            id={value} 
-            aria-label={value} 
-            checked={schedule === value} 
-            value={value}
-            onChange={handleScheduleChange} />
-          <label htmlFor={value}>{label}</label>
-        </li>))}
-        </ul>
-
-        <button type="submit">submit</button>
+        <div className="button-bar">
+          <ul className="schedules">
+            { schedules.map(({ value, label}) => (<li key={value}>
+                <input 
+                  type="checkbox" 
+                  id={value} 
+                  aria-label={value} 
+                  checked={schedule === value} 
+                  value={value}
+                  onChange={handleScheduleChange} />
+                <label htmlFor={value}>{label}</label>
+              </li>))}
+          </ul>
+          <button type="submit">submit</button>
+        </div>
     </form>
   )
 }

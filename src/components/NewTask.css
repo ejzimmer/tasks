@@ -1,6 +1,7 @@
 .new-task {
-  opacity: 0;
+  /* opacity: 0; */
   transition: opacity .2s;
+  --border-radius: 4px;
 }
 .new-task:focus-within, .new-task:hover {
   opacity: 1;
@@ -27,13 +28,16 @@
   position: fixed;
   left: -100vw;
 }
-.new-task label {
+
+.new-task label, .new-task button {
   color: white;
   display: inline-block;
   margin: .5em 0;
   padding: .3em;
   border: 1px solid white;
   cursor: pointer;
+  background: transparent;
+  position: relative; /* ¯\_(ツ)_/¯ removes weird artefact caused by marker of next element */
 }
 .new-task label:hover, .new-task input:checked + label {
   color: currentColor;
@@ -47,6 +51,9 @@
   border-top-right-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
 }
+.new-task button {
+  border-radius: var(--border-radius)
+}
 
 .new-task .schedules {
   display: flex;
@@ -55,10 +62,9 @@
 .new-task .schedules li {
   margin: 0;
   padding: 0;
-  --border-radius: 4px;
 }
 
-.new-task button {
-  position: fixed;
-  left: -100vw;
+.new-task .button-bar {
+  display: flex;
+  justify-content: space-between;
 }
