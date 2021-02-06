@@ -20,7 +20,7 @@ const rescheduleTask = (task) => {
 
   return task
 }
-const sortTasks = ({schedule: a}, {schedule: b}) =>  {
+const sortTasks = ({schedule: a = ''}, {schedule: b = ''}) =>  {
   if (a === b) return 0
   if (a === 'DAILY') return -1
   if (b === 'DAILY') return 1
@@ -41,6 +41,7 @@ function App() {
 
   useEffect(() => {
     if (tasks.length > 0)
+      console.log(tasks)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
   }, [tasks])
 
