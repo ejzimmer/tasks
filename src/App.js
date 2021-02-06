@@ -3,45 +3,19 @@ import Task from './components/Task'
 import NewTask from './components/NewTask'
 
 import './App.css';
-import { isBefore, startOfDay, startOfWeek } from 'date-fns';
+import scheduleTasks from './scheduleTasks';
 
 const STORAGE_KEY = 'tasks'
-const TODAY = startOfDay(Date.now())
-const START_OF_WEEK = startOfWeek(Date.now())
-
-const isTaskDoneYesterday = (task) => task.done && (!task.doneAt || isBefore(task.doneAt, TODAY))
-const isTaskDoneLastWeek = (task) => task.done && (!task.doneAt || isBefore(task.doneAt, START_OF_WEEK))
-const rescheduleTask = (task) => {
-  if (task.schedule === 'DAILY' && isTaskDoneYesterday(task)) {
-    task.done = false
-  } else if (task.schedule === 'WEEKLY' && isTaskDoneLastWeek(task)) {
-    task.done = false
-  }
-
-  return task
-}
-const sortTasks = ({schedule: a = ''}, {schedule: b = ''}) =>  {
-  if (a === b) return 0
-  if (a === 'DAILY') return -1
-  if (b === 'DAILY') return 1
-  if (a === 'WEEKLY') return -1
-  return 1
-}
 
 function App() {
   const [tasks, setTasks] = useState(() => {
     const value = localStorage.getItem(STORAGE_KEY) || '[]'
 
-    return JSON.parse(value)
-            .filter(task => !!(task.description.trim()))
-            .filter(task => task.schedule || !isTaskDoneYesterday(task))
-            .map(rescheduleTask)
-            .sort(sortTasks)
+    return scheduleTasks(JSON.parse(value))
   })
 
   useEffect(() => {
     if (tasks.length > 0)
-      console.log(tasks)
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
   }, [tasks])
 
