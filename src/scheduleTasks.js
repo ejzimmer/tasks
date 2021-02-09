@@ -37,7 +37,7 @@ const rescheduleTask = (task) => {
     task.done = false
   } else if (task.schedule === 'TWICE_WEEKLY' && task.doneAt.length < 2 && isTaskLastDoneTwoDaysAgo(task)) {
     task.done = false
-  }
+  } 
 
   return task
 }

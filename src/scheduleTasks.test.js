@@ -1,10 +1,23 @@
+import { add, sub, startOfWeek } from "date-fns"
 import scheduleTasks from "./scheduleTasks"
 
-const daysAgo = (days) => Date.now() - days * 24 * 60 * 60 * 1000
+const REAL_TODAY = Date.now()
+const FAKE_TODAY = add(startOfWeek(REAL_TODAY), { days: 6 })
 
-const today = Date.now()
+Date.now = () => FAKE_TODAY
+
+const daysAgo = (days) => sub(FAKE_TODAY, { days })
+const today = FAKE_TODAY
 const yesterday = daysAgo(1)
-const lastWeek = daysAgo(7)
+const thisWeek = daysAgo(3)
+const lastWeek = daysAgo(8)
+
+const createTask = (config) => ({
+  id: Math.round(Math.random() * 10),
+  done: false,
+  doneAt: [],
+  ...config
+})
 
 const INITIAL_TASKS = [
   {
@@ -47,37 +60,39 @@ describe('scheduleTasks', () => {
 
   describe('Unscheduled tasks', () => {
     it('removes tasks which were completed yesterday', () => {
-      const tasks = scheduleTasks(INITIAL_TASKS)
+      const tasks = scheduleTasks([
+        createTask({ description: 'Wash dishes', done: true, doneAt: yesterday }),
+        createTask({ description: 'Mow lawn' })
+      ])
+
       expect(getTaskByDescription(tasks, 'Wash dishes')).toBeFalsy()
     })  
   })
 
   describe('Daily tasks', () => {
-    it('re-schedules daily scheduled tasks', () => {
-      const tasks = scheduleTasks(INITIAL_TASKS)
+    it('re-schedules daily scheduled tasks done the day before', () => {
+      const [brushTeeth, combHair] = scheduleTasks([
+        createTask({ description: 'Brush teeth', done: true, doneAt: yesterday, schedule: 'DAILY' }),
+        createTask({ description: 'Comb hair', done: true, doneAt: today, schedule: 'DAILY' })
+      ])
 
-      const brushTeeth = getTaskByDescription(tasks, 'Brush teeth')
-      expect(brushTeeth).toBeTruthy()
       expect(brushTeeth.done).toBe(false)
+      expect(combHair.done).toBe(true)
     })  
   })
 
   describe('Weekly tasks', () => {
-    let tasks 
-
-    beforeEach(() => {
-      tasks = scheduleTasks(INITIAL_TASKS)
-    })
+    const tasks = scheduleTasks([
+      createTask({ description: 'Take out bin', done: true, doneAt: thisWeek, schedule: 'WEEKLY' }),
+      createTask({ description: 'Clean bathroom', done: true, doneAt: lastWeek, schedule: 'WEEKLY' })
+    ])
 
     it('doesn\'t remove completed weekly scheduled tasks', () => {
-      const takeOutBins = getTaskByDescription(tasks, 'Take out bins')
-      expect(takeOutBins).toBeTruthy()
-      expect(takeOutBins.done).toBe(true)
+      expect(tasks.length).toBe(2)
     })
   
-    it('reschedules weekly scheduled tasks', () => {
-      const cleanBathroom = getTaskByDescription(tasks, 'Clean bathroom')
-      expect(cleanBathroom).toBeTruthy()
+    it('reschedules weekly scheduled tasks completed the previous week', () => {
+      const [_, cleanBathroom] = tasks
       expect(cleanBathroom.done).toBe(false)
     })  
   })
@@ -86,59 +101,39 @@ describe('scheduleTasks', () => {
     const twoDaysAgo = daysAgo(3)
     const fourDaysAgo = daysAgo(5)
 
-    it('doesn\'t change a twice weekly task marked as done today or yesterday', () => {
-      const tasks = scheduleTasks([
-        {
-          id: 17,
-          description: 'Gym',
-          schedule: 'TWICE_WEEKLY',
-          done: true,
-          doneAt: [today]
-        }, {
-          id: 18,
-          description: 'Water plants',
-          schedule: 'TWICE_WEEKLY',
-          done: true,
-          doneAt: [yesterday]
-        }
-      ])
+    const createCompletedTask = (doneAt, description = 'Gym') => ({ description, schedule: 'TWICE_WEEKLY', done: true, doneAt })
 
-      const tasksDone = tasks.map(task => task.done)
-      expect(tasksDone).toEqual([true, true])
+    it('doesn\'t change a twice weekly task marked as done today or yesterday', () => {
+      const [gym, waterPlants] = scheduleTasks([
+        createCompletedTask([today]),
+        createCompletedTask([yesterday], 'Water plants')
+      ])
+  
+      expect(gym.done).toBe(true)
+      expect(waterPlants.done).toBe(true)
     })
 
     it('changes a twice weekly task to undone if it was done more than two days ago', () => {
-
-      const [gym] = scheduleTasks([
-        {
-          id: 17,
-          description: 'Gym',
-          schedule: 'TWICE_WEEKLY',
-          done: true,
-          doneAt: [twoDaysAgo]
-        }
-      ])
-
+      const [gym] = scheduleTasks([createCompletedTask([twoDaysAgo])])
       expect(gym.done).toBe(false)
-      
+      expect(gym.doneAt).toEqual([twoDaysAgo])
     })
 
     it('doesn\'t change a twice weekly task that was marked as done twice this week', () => {
-      const [gym] = scheduleTasks([
-        {
-          id: 17,
-          description: 'Gym',
-          schedule: 'TWICE_WEEKLY',
-          done: true,
-          doneAt: [twoDaysAgo, fourDaysAgo]
-        }
-      ])
-
+      const [gym] = scheduleTasks([createCompletedTask([twoDaysAgo, fourDaysAgo])])
       expect(gym.done).toBe(true)
     })
 
-    it('reschedules a done task at the start of the week', () => {
+    it('resets a done task at the start of the week', () => {
+      const [gym, waterPlants] = scheduleTasks([
+        createCompletedTask([lastWeek]),
+        createCompletedTask([lastWeek, daysAgo(10)], 'Water plants')
+      ])
 
+      expect(gym.done).toBe(false)
+      expect(gym.doneAt).toEqual([])
+      expect(waterPlants.done).toBe(false)
+      expect(waterPlants.doneAt).toEqual([])
     })
   })
 
