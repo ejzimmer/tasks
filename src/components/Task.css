@@ -67,3 +67,6 @@
 .task.twice_weekly {
   background: hsla(80 50% 50% / .1);
 }
+.task.thrice_weekly {
+  background: hsla(40 50% 50% / .1);
+}

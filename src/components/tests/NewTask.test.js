@@ -38,4 +38,10 @@ describe("New task", () => {
     createCard('Go to the gym', 'TWICE_WEEKLY')
     expectScheduleToBe('TWICE_WEEKLY')
   })
+
+  it('creates a thrice weekly task', () => {
+    createCard('Go to the gym', 'THRICE_WEEKLY')
+    expectScheduleToBe('THRICE_WEEKLY')
+  })
+
 })

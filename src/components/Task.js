@@ -54,7 +54,7 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
 
   function setTaskDone() {
     const done = !task.done
-    const doneAt = task.schedule === 'TWICE_WEEKLY' ? (task.doneAt || []) : Date.now()
+    const doneAt = ['TWICE_WEEKLY', 'THRICE_WEEKLY'].includes(task.schedule) ? (task.doneAt || []) : Date.now()
     doneAt instanceof Array && doneAt.push(Date.now())
 
     updateTask({

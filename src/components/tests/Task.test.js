@@ -76,6 +76,13 @@ describe('Task component', () => {
 
       expectDoneUpdate([yesterday, now])
     })
+
+    it('creates a doneAt array when the schedule is thrice weekly', () => {
+      setup({ schedule: 'THRICE_WEEKLY' })
+      markAsDone()
+
+      expectDoneUpdate([now])
+    })
   })
 
   describe('editing tasks', () => {

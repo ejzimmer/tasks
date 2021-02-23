@@ -1,4 +1,4 @@
-import { add, sub, startOfWeek, isBefore } from "date-fns"
+import { add, sub, startOfWeek } from "date-fns"
 import scheduleTasks from "./scheduleTasks"
 
 const REAL_TODAY = Date.now()
@@ -51,6 +51,12 @@ const INITIAL_TASKS = [
     done: true,
     doneAt: lastWeek,
     schedule: 'WEEKLY'
+  }, {
+    id: 7,
+    description: 'Go for a run',
+    done: true,
+    doneAt: [lastWeek, yesterday],
+    schedule: 'THRICE_WEEKLY'
   }]
 
 describe('scheduleTasks', () => {
@@ -126,7 +132,47 @@ describe('scheduleTasks', () => {
       expect(gym.done).toBe(true)
     })
 
-    it('doesn\'t change a twice weekly task that was marked as done on Sunday', () => {
+    it('doesn\'t change a twice weekly task that was marked as done on Sunday last week', () => {
+      const mondayThisWeek = startOfWeek(FAKE_TODAY, { weekStartsOn: 1 })
+      const sundayLastWeek = sub(mondayThisWeek, { days: 1})
+      Date.now = () => mondayThisWeek
+
+      const [gym] = scheduleTasks([createCompletedTask([sundayLastWeek])])
+
+      expect(gym.done).toBe(true)
+    })
+
+  })
+
+  describe('Three times weekly tasks', () => {
+    const twoDaysAgo = daysAgo(3)
+    const threeDaysAgo = daysAgo(4)
+    const fourDaysAgo = daysAgo(5)
+
+    const createCompletedTask = (doneAt, description = 'Gym') => ({ description, schedule: 'THRICE_WEEKLY', done: true, doneAt })
+
+    it('doesn\'t change a thrice weekly task marked as done today or yesterday', () => {
+      const [gym, waterPlants] = scheduleTasks([
+        createCompletedTask([today]),
+        createCompletedTask([yesterday], 'Water plants')
+      ])
+  
+      expect(gym.done).toBe(true)
+      expect(waterPlants.done).toBe(true)
+    })
+
+    it('changes a thrice weekly task to undone if it was done more than two days ago', () => {
+      const [gym] = scheduleTasks([createCompletedTask([twoDaysAgo])])
+      expect(gym.done).toBe(false)
+      expect(gym.doneAt).toEqual([twoDaysAgo])
+    })
+
+    it('doesn\'t change a thice weekly task that was marked as done three times this week', () => {
+      const [gym] = scheduleTasks([createCompletedTask([twoDaysAgo, threeDaysAgo, fourDaysAgo])])
+      expect(gym.done).toBe(true)
+    })
+
+    it('doesn\'t change a thrice weekly task that was marked as done on Sunday last week', () => {
       const mondayThisWeek = startOfWeek(FAKE_TODAY, { weekStartsOn: 1 })
       const sundayLastWeek = sub(mondayThisWeek, { days: 1})
       Date.now = () => mondayThisWeek
@@ -139,9 +185,9 @@ describe('scheduleTasks', () => {
   })
 
   describe('Sorting', () => {
-    it('sorts tasks by daily, twice weekly, weekly, unscheduled', () => {
+    it('sorts tasks by daily, three times weekly, twice weekly, weekly, unscheduled', () => {
       const tasks = scheduleTasks(INITIAL_TASKS)
-      const sortedTasks = ['Brush teeth', 'Gym', 'Take out bins', 'Clean bathroom', 'Mow lawn']
+      const sortedTasks = ['Brush teeth', 'Go for a run', 'Gym', 'Take out bins', 'Clean bathroom', 'Mow lawn']
       expect(tasks.map(task => task.description)).toEqual(sortedTasks)
     })
   })

@@ -12,7 +12,7 @@ export default function scheduleTasks(initialTasks) {
     .sort(sortTasks)
 }
 
-const SORT_ORDER = ['DAILY', 'TWICE_WEEKLY', 'WEEKLY', '']
+const SORT_ORDER = ['DAILY', 'THRICE_WEEKLY', 'TWICE_WEEKLY', 'WEEKLY', '']
 const sortTasks = ({schedule: a = ''}, {schedule: b = ''}) =>  {
   const sortOrderA = SORT_ORDER.findIndex(schedule => schedule === a)
   const sortOrderB = SORT_ORDER.findIndex(schedule => schedule === b)
@@ -33,25 +33,29 @@ const wasTaskDoneBeforeYesterday = (task) => wasTaskDoneBefore(task, yesterday()
 const wasTaskDoneLastWeek = (task) => wasTaskDoneBefore(task, weekStart())
 
 
-const shouldResetTwiceWeeklyTask = (task) => {
+const shouldResetMutlipleTimesWeeklyTask = (task, numberOfTimes) => {
   if (!task.done) return false
 
   const numberOfTimesCompletedThisWeek = task.doneAt.filter(date => isAfter(date, weekStart())).length
-  if (numberOfTimesCompletedThisWeek < 2 && wasTaskDoneBeforeYesterday(task)) {
+  if (numberOfTimesCompletedThisWeek < numberOfTimes && wasTaskDoneBeforeYesterday(task)) {
     return true
   }
 
   return false
 }
 
+const RESET_TASK = {
+  DAILY: wasTaskDoneYesterday,
+  WEEKLY: wasTaskDoneLastWeek,
+  TWICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 2),
+  THRICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 3)
+}
+
 const rescheduleTask = (task) => {
-  if (task.schedule === 'DAILY' && wasTaskDoneYesterday(task)) {
+  const shouldResetTask = !!task.schedule && RESET_TASK[task.schedule](task)
+  if (shouldResetTask) {
     task.done = false
-  } else if (task.schedule === 'WEEKLY' && wasTaskDoneLastWeek(task)) {
-    task.done = false
-  } else if (task.schedule === 'TWICE_WEEKLY' && shouldResetTwiceWeeklyTask(task)) {
-    task.done = false
-  } 
+  }
 
   return task
 }
