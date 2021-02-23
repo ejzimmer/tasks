@@ -6,6 +6,11 @@ import NewTask from '../NewTask'
 describe("New task", () => {
   const addTask = jest.fn()
 
+  const expectScheduleToBe = schedule => {
+    const [task] = addTask.mock.calls[0]
+    expect(task.schedule).toBe(schedule)
+  }
+
   beforeEach(() => {
     addTask.mockClear()
 
@@ -21,15 +26,16 @@ describe("New task", () => {
 
   it('creates a daily task', () => {
     createCard('Brush teeth', 'DAILY')
-
-    const [task] = addTask.mock.calls[0]
-    expect(task.schedule).toBe('DAILY')
+    expectScheduleToBe('DAILY')
   })
 
   it('creates a weekly task', () => {
     createCard('Take out bins', 'WEEKLY')
+    expectScheduleToBe('WEEKLY')
+  })
 
-    const [task] = addTask.mock.calls[0]
-    expect(task.schedule).toBe('WEEKLY')
+  it('creates a twice weekly task', () => {
+    createCard('Go to the gym', 'TWICE_WEEKLY')
+    expectScheduleToBe('TWICE_WEEKLY')
   })
 })

@@ -1,10 +1,8 @@
-import { add, sub, startOfWeek } from "date-fns"
+import { add, sub, startOfWeek, isBefore } from "date-fns"
 import scheduleTasks from "./scheduleTasks"
 
 const REAL_TODAY = Date.now()
-const FAKE_TODAY = add(startOfWeek(REAL_TODAY), { days: 6 })
-
-Date.now = () => FAKE_TODAY
+const FAKE_TODAY = add(startOfWeek(REAL_TODAY, { weekStartsOn: 1 }), { days: 6 })
 
 const daysAgo = (days) => sub(FAKE_TODAY, { days })
 const today = FAKE_TODAY
@@ -57,6 +55,10 @@ const INITIAL_TASKS = [
 
 describe('scheduleTasks', () => {
   const getTaskByDescription = (tasks, description) => tasks.find(task => task.description === description)
+
+  beforeEach(() => {
+    Date.now = () => FAKE_TODAY
+  })
 
   describe('Unscheduled tasks', () => {
     it('removes tasks which were completed yesterday', () => {
@@ -124,17 +126,16 @@ describe('scheduleTasks', () => {
       expect(gym.done).toBe(true)
     })
 
-    it('resets a done task at the start of the week', () => {
-      const [gym, waterPlants] = scheduleTasks([
-        createCompletedTask([lastWeek]),
-        createCompletedTask([lastWeek, daysAgo(10)], 'Water plants')
-      ])
+    it('doesn\'t change a twice weekly task that was marked as done on Sunday', () => {
+      const mondayThisWeek = startOfWeek(FAKE_TODAY, { weekStartsOn: 1 })
+      const sundayLastWeek = sub(mondayThisWeek, { days: 1})
+      Date.now = () => mondayThisWeek
 
-      expect(gym.done).toBe(false)
-      expect(gym.doneAt).toEqual([])
-      expect(waterPlants.done).toBe(false)
-      expect(waterPlants.doneAt).toEqual([])
+      const [gym] = scheduleTasks([createCompletedTask([sundayLastWeek])])
+
+      expect(gym.done).toBe(true)
     })
+
   })
 
   describe('Sorting', () => {

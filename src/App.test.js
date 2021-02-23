@@ -80,7 +80,7 @@ describe('the list', () => {
     expect(getTaskDescriptions()).toEqual(['Mow lawn', 'Cook dinner'])
   })
 
-  it('shows the number uncompleted items in the list', () => {
+  it('shows the number of uncompleted items in the list', () => {
     const getNumberOfTasksRemaining = () => screen.getByLabelText('tasks remaining')
     expect(getNumberOfTasksRemaining()).toHaveTextContent('3')
 
@@ -191,9 +191,5 @@ describe('the list', () => {
 
       expect(setItem).toHaveBeenCalled()
     })
-
   })
 })
-
-
-

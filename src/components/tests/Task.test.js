@@ -1,54 +1,102 @@
 import React from 'react'
-import { render, fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
+import { sub } from 'date-fns';
+
 
 import Task from '../Task'
 
 let task
-let component
 
 const EDIT_BUTTON = /edit task/
 const DELETE_BUTTON = /delete task/
 
-const updateTask = updatedTask => task.description = updatedTask.description
 const clickButton = (buttonText) => {
   const button = screen.queryByText(buttonText) || screen.queryByLabelText(buttonText)
   fireEvent.click(button)
 }
 const getInput = () => screen.getByRole('textbox')
 
-describe('Task component', () => {
-  let deleteTaskSpy
+const now = Date.now()
+Date.now = () => now
+const yesterday = sub(now, { days: 1 })
 
-  beforeEach(() => {
-    task = {
-      id: 2,
-      description: 'Mow lawn',
-      done: false
+let deleteTaskSpy
+let updateTaskSpy
+
+const setup = (props) => {
+  task = {
+    id: 2,
+    description: 'Mow lawn',
+    done: false,
+    ...props
+  }
+
+  deleteTaskSpy = jest.fn()
+  updateTaskSpy = jest.fn()
+  render(<Task task={task} updateTask={updateTaskSpy} deleteTask={deleteTaskSpy} />)
+}
+
+describe('Task component', () => {
+
+  describe('marking a task as done', () => {
+
+    const markAsDone = () => {
+      const checkbox = screen.getByLabelText('Mow lawn')
+      fireEvent.click(checkbox)
     }
 
-    deleteTaskSpy = jest.fn()
-    component = render(<Task task={task} updateTask={updateTask} deleteTask={deleteTaskSpy} />)
+    const expectDoneUpdate = (doneAt) => {
+      expect(updateTaskSpy).toHaveBeenCalledWith({
+        ...task,
+        done: true,
+        doneAt
+      })
+    }
+
+    it('sets done and doneAt', () => {
+      setup()
+      markAsDone()
+
+      expectDoneUpdate(now)
+    })
+
+    it('creates a doneAt array when the schedule is twice weekly', () => {
+      setup({ schedule: 'TWICE_WEEKLY' })
+      markAsDone()
+
+      expectDoneUpdate([now])
+    })
+
+    it('adds to the doneAt array if it already exists', () => {
+      setup({
+        schedule: 'TWICE_WEEKLY',
+        doneAt: [yesterday]
+      })
+      markAsDone()
+
+      expectDoneUpdate([yesterday, now])
+    })
   })
 
   describe('editing tasks', () => {
     it('edits the description of an item', () => {
+      setup()
       clickButton(EDIT_BUTTON)
    
       const input = getInput()
       fireEvent.change(input, { target: { value: 'Mow lawn and water plants' } })
       fireEvent.blur(input)  
-      
-      const updatedTask = screen.getByText(/Mow lawn and water plants/)
-      expect(updatedTask).toBeInTheDocument()
+
+      expect(updateTaskSpy).toHaveBeenCalled()
     })
   
     it('doesn\'t edit completed items', () => {
-      task.done = true
-      component.rerender()
+      setup({ done: true })
       expect(screen.queryByLabelText(EDIT_BUTTON)).not.toBeInTheDocument()
     })
     
     it('exits edit mode when enter is pressed', async () => {
+      setup()
       clickButton(EDIT_BUTTON)
 
       const input = getInput()
@@ -65,6 +113,7 @@ describe('Task component', () => {
     let confirmDialog
 
     beforeEach(() => {
+      setup()
       clickButton(DELETE_BUTTON)
       confirmDialog = screen.getByText('Really delete?')
     })
@@ -85,6 +134,4 @@ describe('Task component', () => {
       expect(confirmDialog).not.toBeInTheDocument()
     })
   })
-
-
 })

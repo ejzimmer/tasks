@@ -10,6 +10,10 @@ const schedules = [
     label: '毎週',
     value: 'WEEKLY'
   },
+  {
+    label: '2/週',
+    value: 'TWICE_WEEKLY'
+  }
 ]
 
 export default function NewTask({ addTask }) {

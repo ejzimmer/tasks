@@ -38,6 +38,7 @@
   cursor: pointer;
   background: transparent;
   position: relative; /* ¯\_(ツ)_/¯ removes weird artefact caused by marker of next element */
+  line-height: 1.5;
 }
 .new-task label:hover, .new-task input:checked + label {
   color: currentColor;
