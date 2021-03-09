@@ -3,6 +3,7 @@ import { isAfter, isBefore, startOfDay, startOfWeek, sub } from 'date-fns';
 const today = () => startOfDay(Date.now())
 const yesterday = () => sub(today(), { days: 1 })
 const weekStart = () => startOfWeek(Date.now(), {weekStartsOn: 1})
+const isWeekend = () => today().getDay() === 6 || today().getDay() === 0
 
 export default function scheduleTasks(initialTasks) {
   return initialTasks
@@ -32,7 +33,6 @@ const wasTaskDoneYesterday = (task) => wasTaskDoneBefore(task, today())
 const wasTaskDoneBeforeYesterday = (task) => wasTaskDoneBefore(task, yesterday())
 const wasTaskDoneLastWeek = (task) => wasTaskDoneBefore(task, weekStart())
 
-
 const shouldResetMutlipleTimesWeeklyTask = (task, numberOfTimes) => {
   if (!task.done) return false
 
@@ -44,8 +44,14 @@ const shouldResetMutlipleTimesWeeklyTask = (task, numberOfTimes) => {
   return false
 }
 
+const shouldResetWeekdayTask = (task) => {
+  if (!task.done) return false
+  return !isWeekend()
+}
+
 const RESET_TASK = {
   DAILY: wasTaskDoneYesterday,
+  WEEK_DAY: shouldResetWeekdayTask,
   WEEKLY: wasTaskDoneLastWeek,
   TWICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 2),
   THRICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 3)

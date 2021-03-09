@@ -181,6 +181,47 @@ describe('scheduleTasks', () => {
 
       expect(gym.done).toBe(true)
     })
+  })
+
+  describe('Week day tasks', () => {
+    const monday = startOfWeek(REAL_TODAY, { weekStartsOn: 1 })
+    const daysAfterMonday = days => add(monday, { days })
+
+    const createTask = doneAt => ({ description: 'Brush teeth', done: true, doneAt, schedule: 'WEEK_DAY'})
+
+    const expectTaskToBeDone = (task, expectation) => {
+      const [brushTeeth] = scheduleTasks([task])
+      expect(brushTeeth.done).toBe(expectation)
+    }
+
+    it('re-schedules a week day at the start of the week', () => {
+      const friday = daysAfterMonday(-3)
+      const fridayTask = createTask(friday)
+
+      Date.now = () => monday
+
+      expectTaskToBeDone(fridayTask, false)
+    })  
+
+    it('reschedules a week day task in the middle of the week', () => {
+      const wednesday = daysAfterMonday(3)
+      const wednesdayTask = createTask(wednesday)
+
+      const thursday = daysAfterMonday(4)
+      Date.now = () => thursday
+
+      expectTaskToBeDone(wednesdayTask, false)
+    })
+
+    it('doesn\'t reschedule a week day task on the weekend', () => {
+      const friday = daysAfterMonday(5)
+      const fridayTask = createTask(friday)
+
+      const saturday = daysAfterMonday(6)
+      Date.now = () => saturday
+
+      expectTaskToBeDone(fridayTask, true)
+    })
 
   })
 
