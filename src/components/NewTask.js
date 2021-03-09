@@ -17,6 +17,10 @@ const schedules = [
   {
     label: '3/週',
     value: 'THRICE_WEEKLY'
+  },
+  {
+    label: '平日',
+    value: 'WEEK_DAYS'
   }
 ]
 

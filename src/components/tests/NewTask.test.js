@@ -44,4 +44,9 @@ describe("New task", () => {
     expectScheduleToBe('THRICE_WEEKLY')
   })
 
+  it('creates a week days task', () => {
+    createCard('Go to work', 'WEEK_DAYS')
+    expectScheduleToBe('WEEK_DAYS')
+  })
+
 })
