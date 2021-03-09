@@ -17,48 +17,6 @@ const createTask = (config) => ({
   ...config
 })
 
-const INITIAL_TASKS = [
-  {
-    id: 5,
-    description: 'Take out bins',
-    done: true,
-    doneAt: yesterday,
-    schedule: 'WEEKLY'
-  }, {
-    id: 1,
-    description: 'Wash dishes',
-    done: true,
-    doneAt: yesterday
-  }, {
-    id: 17,
-    description: 'Gym',
-    done: false,
-    schedule: 'TWICE_WEEKLY',
-    doneAt: []
-  }, {
-    id: 2,
-    description: 'Mow lawn',
-    done: false
-  }, {
-    id: 4,
-    description: 'Brush teeth',
-    done: true,
-    doneAt: yesterday,
-    schedule: 'DAILY'
-  }, {
-    id: 6,
-    description: 'Clean bathroom',
-    done: true,
-    doneAt: lastWeek,
-    schedule: 'WEEKLY'
-  }, {
-    id: 7,
-    description: 'Go for a run',
-    done: true,
-    doneAt: [lastWeek, yesterday],
-    schedule: 'THRICE_WEEKLY'
-  }]
-
 describe('scheduleTasks', () => {
   const getTaskByDescription = (tasks, description) => tasks.find(task => task.description === description)
 
@@ -187,7 +145,7 @@ describe('scheduleTasks', () => {
     const monday = startOfWeek(REAL_TODAY, { weekStartsOn: 1 })
     const daysAfterMonday = days => add(monday, { days })
 
-    const createTask = doneAt => ({ description: 'Brush teeth', done: true, doneAt, schedule: 'WEEK_DAY'})
+    const createTask = doneAt => ({ description: 'Brush teeth', done: true, doneAt, schedule: 'WEEK_DAYS'})
 
     const expectTaskToBeDone = (task, expectation) => {
       const [brushTeeth] = scheduleTasks([task])
@@ -226,9 +184,57 @@ describe('scheduleTasks', () => {
   })
 
   describe('Sorting', () => {
-    it('sorts tasks by daily, three times weekly, twice weekly, weekly, unscheduled', () => {
-      const tasks = scheduleTasks(INITIAL_TASKS)
-      const sortedTasks = ['Brush teeth', 'Go for a run', 'Gym', 'Take out bins', 'Clean bathroom', 'Mow lawn']
+    it('sorts tasks in order', () => {
+      const unsortedTasks = [
+        {
+          id: 5,
+          description: 'Take out bins',
+          done: true,
+          doneAt: yesterday,
+          schedule: 'WEEKLY'
+        }, {
+          id: 1,
+          description: 'Wash dishes',
+          done: true,
+          doneAt: yesterday
+        }, {
+          id: 17,
+          description: 'Gym',
+          done: false,
+          schedule: 'TWICE_WEEKLY',
+          doneAt: []
+        }, {
+          id: 2,
+          description: 'Mow lawn',
+          done: false
+        }, {
+          id: 4,
+          description: 'Brush teeth',
+          done: true,
+          doneAt: yesterday,
+          schedule: 'DAILY'
+        }, {
+          id: 6,
+          description: 'Clean bathroom',
+          done: true,
+          doneAt: lastWeek,
+          schedule: 'WEEKLY'
+        }, {
+          id: 7,
+          description: 'Go for a run',
+          done: true,
+          doneAt: [lastWeek, yesterday],
+          schedule: 'THRICE_WEEKLY'
+        }, {
+          id: 8,
+          description: 'Go to work',
+          done: false,
+          doneAt: [lastWeek, yesterday],
+          schedule: 'WEEK_DAYS'
+        }]
+      
+      const tasks = scheduleTasks(unsortedTasks)
+      const sortedTasks = ['Brush teeth', 'Go to work', 'Go for a run', 'Gym', 'Take out bins', 'Clean bathroom', 'Mow lawn']
       expect(tasks.map(task => task.description)).toEqual(sortedTasks)
     })
   })

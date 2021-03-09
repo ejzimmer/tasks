@@ -13,7 +13,7 @@ export default function scheduleTasks(initialTasks) {
     .sort(sortTasks)
 }
 
-const SORT_ORDER = ['DAILY', 'THRICE_WEEKLY', 'TWICE_WEEKLY', 'WEEKLY', '']
+const SORT_ORDER = ['DAILY', 'WEEK_DAYS', 'THRICE_WEEKLY', 'TWICE_WEEKLY', 'WEEKLY', '']
 const sortTasks = ({schedule: a = ''}, {schedule: b = ''}) =>  {
   const sortOrderA = SORT_ORDER.findIndex(schedule => schedule === a)
   const sortOrderB = SORT_ORDER.findIndex(schedule => schedule === b)
@@ -51,7 +51,7 @@ const shouldResetWeekdayTask = (task) => {
 
 const RESET_TASK = {
   DAILY: wasTaskDoneYesterday,
-  WEEK_DAY: shouldResetWeekdayTask,
+  WEEK_DAYS: shouldResetWeekdayTask,
   WEEKLY: wasTaskDoneLastWeek,
   TWICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 2),
   THRICE_WEEKLY: task => shouldResetMutlipleTimesWeeklyTask(task, 3)
