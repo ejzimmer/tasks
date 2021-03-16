@@ -46,7 +46,7 @@ const shouldResetMutlipleTimesWeeklyTask = (task, numberOfTimes) => {
 
 const shouldResetWeekdayTask = (task) => {
   if (!task.done) return false
-  return !isWeekend()
+  return !isWeekend() && wasTaskDoneYesterday(task)
 }
 
 const RESET_TASK = {

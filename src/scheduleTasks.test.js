@@ -152,6 +152,14 @@ describe('scheduleTasks', () => {
       expect(brushTeeth.done).toBe(expectation)
     }
 
+    it('doesn\'t reschedule a task that was done today', () => {
+      const todayTask = createTask(monday)
+
+      Date.now = () => monday
+
+      expectTaskToBeDone(todayTask, true)
+    })
+
     it('re-schedules a week day at the start of the week', () => {
       const friday = daysAfterMonday(-3)
       const fridayTask = createTask(friday)
