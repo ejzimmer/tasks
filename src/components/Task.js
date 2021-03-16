@@ -102,8 +102,11 @@ export default function Task({task, deleteTask, updateTask, moveTask}) {
     setShowConfirmDelete(false)
   }
 
+  const { schedule, hide } = task
+  const getClasses = () => `task ${schedule ? schedule.toLowerCase() : ''} ${hide ? 'hidden' : ''}`
+
   return (
-    <div className={`task ${task.schedule ? task.schedule.toLowerCase() : ''}`}>
+    <div className={getClasses()}>
       <input id={`task_${task.id}`} type="checkbox" checked={!!task.done} onChange={setTaskDone} />
       { !editMode && <label htmlFor={`task_${task.id}`}>{task.description}</label>}
       { editMode && (

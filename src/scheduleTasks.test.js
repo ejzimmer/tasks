@@ -143,7 +143,10 @@ describe('scheduleTasks', () => {
 
   describe('Week day tasks', () => {
     const monday = startOfWeek(REAL_TODAY, { weekStartsOn: 1 })
+
     const daysAfterMonday = days => add(monday, { days })
+
+    const saturday = daysAfterMonday(6)
 
     const createTask = doneAt => ({ description: 'Brush teeth', done: true, doneAt, schedule: 'WEEK_DAYS'})
 
@@ -183,10 +186,18 @@ describe('scheduleTasks', () => {
       const friday = daysAfterMonday(5)
       const fridayTask = createTask(friday)
 
-      const saturday = daysAfterMonday(6)
       Date.now = () => saturday
 
       expectTaskToBeDone(fridayTask, true)
+    })
+
+    it('hides week day tasks on the weekend', () => {
+      const task = createTask(monday)
+      Date.now = () => saturday 
+
+      const [scheduledTask] = scheduleTasks([task])
+      expect(scheduledTask.hide).toBe(true)
+      
     })
 
   })

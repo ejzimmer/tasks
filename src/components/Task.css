@@ -7,6 +7,10 @@
   border-bottom: 1px solid #000
 }
 
+.task.hidden {
+  display: none;
+}
+
 .task label, .task input[type="text"] {
   display: flex;
   align-items: center;

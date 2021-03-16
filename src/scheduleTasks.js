@@ -49,6 +49,8 @@ const shouldResetWeekdayTask = (task) => {
   return !isWeekend() && wasTaskDoneYesterday(task)
 }
 
+const shouldHideTask = task => task.schedule === 'WEEK_DAYS' && isWeekend()
+
 const RESET_TASK = {
   DAILY: wasTaskDoneYesterday,
   WEEK_DAYS: shouldResetWeekdayTask,
@@ -62,6 +64,8 @@ const rescheduleTask = (task) => {
   if (shouldResetTask) {
     task.done = false
   }
+
+  task.hide = shouldHideTask(task)
 
   return task
 }
