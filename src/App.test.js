@@ -44,6 +44,7 @@ const setItem = jest.spyOn(localStorage, 'setItem')
 
 describe('the list', () => {
   let INITIAL_TASK_DESCRIPTIONS 
+  const getNumberOfTasksRemaining = () => screen.getByLabelText('tasks remaining')
 
   beforeEach(() => {
     jest.spyOn(localStorage, 'getItem').mockReturnValue(JSON.stringify([{
@@ -81,7 +82,6 @@ describe('the list', () => {
   })
 
   it('shows the number of uncompleted items in the list', () => {
-    const getNumberOfTasksRemaining = () => screen.getByLabelText('tasks remaining')
     expect(getNumberOfTasksRemaining()).toHaveTextContent('3')
 
     const firstTask = getTask(0).querySelector('label')

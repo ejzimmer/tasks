@@ -59,3 +59,12 @@
   transform: translate(20%, -30%);
   background-color: hsla(0, 0%, 30%, .8)
 }
+
+.undo-button {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 40px;
+}

@@ -13,11 +13,18 @@ function App() {
 
     return scheduleTasks(JSON.parse(value))
   })
+  const [previousStates, setPreviousStates] = useState([])
 
   useEffect(() => {
-    if (tasks.length > 0)
+    if (tasks.length > 0) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
-  }, [tasks])
+    }
+
+    const [previousState] = previousStates
+    if (previousState !== tasks) {
+      setPreviousStates((states) => [tasks, ...states])
+    }
+  }, [tasks, previousStates])
 
   const addTask = (newTask) => {
     setTasks([...tasks, newTask])
@@ -77,6 +84,14 @@ function App() {
     })
   }
 
+  const handleUndo = () => {
+    if (previousStates.length < 2) return
+
+    const previousState = previousStates[1]
+    setTasks(previousState)
+    setPreviousStates(([_, ...earlierStates]) => earlierStates)
+  }
+
   return (
     <>
       <ul className="day-list" data-testid="tasks">
@@ -90,6 +105,7 @@ function App() {
         </li>
       </ul>
       <div className="tasks-remaining" aria-label="tasks remaining">{tasks.filter(task => !task.done).length}</div>
+      <button className="undo-button" aria-label="undo" onClick={handleUndo}>↩️</button>
     </>
   );
 }
